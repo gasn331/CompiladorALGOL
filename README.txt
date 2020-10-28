@@ -1,0 +1,1 @@
+Execucao: python main.py [Arquivo de entrada]
