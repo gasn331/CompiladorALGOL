@@ -11,7 +11,7 @@ A lista de aceitação representa os estados de aceitação do autômato, essa l
 determinar quais os tokens reconhecidos de acordo com o estado.
 
 Os casos de erro são determinados a partir de finalização da execução do automato num estado que não seja de aceitação.
-Assim, o a construção do autômato é simplificada.
+Assim, a construção do autômato é simplificada.
 """
 
 class AFD:
