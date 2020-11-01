@@ -20,7 +20,7 @@ class AFD:
         self.inicial   = inicial
         self.linha     = linha
         self.coluna    = coluna
-        self.aceitacao = {1:'Num',3:'Num',6:'Num',7:'OPM',9:'Literal',10:'id',12:'Comentario',13:'EOF',14:'OPR',15:'OPR',16:'OPR',17:'RCB',18:'OPR',19:'FC_P',20:'AB_P',21:'PT_V'}
+        self.aceitacao = {1:'num',3:'num',6:'num',7:'opm',9:'literal',10:'id',12:'comentario',13:'$',14:'opr',15:'opr',16:'opr',17:'rcb',18:'opr',19:')',20:'(',21:';'}
         self.afd       = {0: {1:'[0-9]',7:r'[\+|\-|\/|\*]',8:r'\"',10:'[a-zA-Z]', 11: r'\{', 13:r'\$',14:r'\>',16:r'\<',18:r'\=',19:r'\)',20:r'\(',21:r'\;'},
                           1: {1:'[0-9]', 2:r'\.',4:'[e|E]',6:'[0-9]'},
                           2: {3:'[0-9]'},

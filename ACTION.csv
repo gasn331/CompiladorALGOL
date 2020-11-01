@@ -1,4 +1,4 @@
-Estados;inicio;varinicio;varfim;id;int;real;lit;leia;escreva;literal;num;rcb;opm;se;entao;opr;fimse;fim;";";(;);$
+Estados;inicio;varinicio;varfim;id;inteiro;real;lit;leia;escreva;literal;num;rcb;opm;se;entao;opr;fimse;fim;";";(;);$
 0;s2;;;;;;;;;;;;;;;;;;;;;
 1;;;;;;;;;;;;;;;;;;;;;;acc
 2;;s4;;;;;;;;;;;;;;;;;;;;
@@ -28,8 +28,8 @@ Estados;inicio;varinicio;varfim;id;int;real;lit;leia;escreva;literal;num;rcb;opm
 26;;;;;;;;;;;;;;;;;;;r18;;;
 27;;;;;;;;;;;;;;;;;;;s28;;;
 28;;;;r17;;;;r17;r17;;;;;r17;;;r17;r17;;;;
-29;;;;;;;;;;;;;r20;;;r20;;;r20;;;
-30;;;;;;;;;;;;;r21;;;r21;;;r21;;;
+29;;;;;;;;;;;;;r20;;;r20;;;r20;;r20;
+30;;;;;;;;;;;;;r21;;;r21;;;r21;;r21;
 31;;;;;;;;;;;;;;;;;;;;;;r16
 32;;;;;;;;;;;;;;;;;;;;s33;;
 33;;;;s29;;;;;;;s30;;;;;;;;;;;

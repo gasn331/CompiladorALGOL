@@ -6,7 +6,7 @@ inicio
         C real;
     varfim;
 
-    escreva "Digite B;
+    escreva "Digite B";
     leia B;
     escreva "Digite A:";
     leia A;
@@ -26,7 +26,7 @@ inicio
     
     escreva "\nB=\n";
     escreva D;
-    escreva "\n;
+    escreva "\n";
     escreva C;
     escreva "\n";
     escreva A;
