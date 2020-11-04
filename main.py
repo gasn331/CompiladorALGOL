@@ -2,6 +2,7 @@ from Lexico import Lexico
 from Palavra import Palavra
 import pandas as pd
 import sys
+import TratamentoDeErros
 """
 Execucao: python main.py [Arquivo de entrada]
 """
@@ -45,6 +46,7 @@ PalavrasReservadas = ["inicio", "varinicio", "varfim", "escreva",
 29 CORPO→fimse
 30 A→fim
 """
+Delimitador = [';','fimse','fim',')','$']
 Gramatica = {1:["P\'",["P"]],
              2:["P",["inicio","V", "A"]],   
              3:["V",["varinicio","LV"]],   
@@ -93,31 +95,29 @@ def getToken(AnalisadorLexico):
             a = TabelaDeSimbolos[a.lexema]
     return a
 
+
 def AnaliseSintatica(AnalisadorLexico):
-    #ACTION = pd.DataFrame.to_dict(pd.read_csv("ACTION.csv",sep=';'))
-    #GOTO = pd.DataFrame.to_dict(pd.read_csv("GOTO.csv",sep=';'))
     ACTION = pd.read_csv("ACTION.csv",sep=';',index_col='Estados')
     ACTION = pd.DataFrame.to_dict(ACTION,orient='index')
     GOTO = pd.read_csv("GOTO.csv",sep=';',index_col='Estados')
     GOTO = pd.DataFrame.to_dict(GOTO,orient='index')
-    #pd.DataFrame.set_index('Estados').ACTION
+    
     """print(ACTION)
     print("\n\n\n\n")
     print(GOTO)
     return"""
-
     a = getToken(AnalisadorLexico)
     pilha = [0]
     while(1):
         #print(pilha)
         s = pilha[-1]
        # print(s,ACTION[s][a.token],a.lexema,a.token)
-        if ACTION[s][a.token][0] == 's':
+        if not (pd.isnull(ACTION[s][a.token])) and ACTION[s][a.token][0] == 's':
             t = int(ACTION[s][a.token][1:])
             pilha.append(t)
             a = getToken(AnalisadorLexico)
             #print('SHIFT')
-        elif ACTION[s][a.token][0] == 'r':
+        elif not (pd.isnull(ACTION[s][a.token])) and ACTION[s][a.token][0] == 'r':
             regra = int(ACTION[s][a.token][1:])
             A,Beta = Gramatica[regra]
             for cont in range(0,len(Beta)):
@@ -128,16 +128,16 @@ def AnaliseSintatica(AnalisadorLexico):
             pilha.append(int(GOTO[t][A]))
             print(A+' -> '+' '.join(Beta))
             #print('REDUCE')
-        elif ACTION[s][a.token] == 'acc':
+        elif not (pd.isnull(ACTION[s][a.token])) and ACTION[s][a.token] == 'acc':
             #analise completa
             break
         else:
             """
                 Tratamento de erros, criar nova classe e centralizar os erros léxicos e sintáticos lá
             """
-            pass
-
-
+            erro = TratamentoDeErros.Erro(ACTION,Delimitador)
+            erro.Apresentar(AnalisadorLexico.linha,AnalisadorLexico.coluna,pilha[-1],a.token)
+            a,AnalisadorLexico,pilha = erro.Recuperar(a,AnalisadorLexico,pilha)
 
 
 if __name__ == "__main__":

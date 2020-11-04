@@ -1,14 +1,14 @@
 inicio
     varinicio
-        A lit;
+        A ;
         B inteiro;
         D inteiro;
         C real;
-    varfim;
+    varfim
 
     escreva "Digite B";
     leia B;
-    escreva "Digite A:";
+    escreva 
     leia A;
     se(B>2)
     entao
