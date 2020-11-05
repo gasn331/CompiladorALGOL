@@ -5,16 +5,19 @@ class Erro:
     def __init__(self,ACTION,Delimitador):
         self.ACTION = ACTION
         self.Delimitador = Delimitador
+        self.TabelaDeErros = pd.read_csv("MENSAGEM_ERROS.csv",sep=';',index_col='CodErro')
+        self.TabelaDeErros = pd.DataFrame.to_dict(self.TabelaDeErros,orient='index')
 
     def Apresentar(self,linha,coluna,estado,token):
         if token == 'ERRO':
             print('ERRO LEXICO: Token Invalido na linha '+ str(linha) + ' coluna ' + str(coluna))
             return
-        mensagem = 'ERRO SINTATICO: '
-        for item in self.ACTION[estado]:
-            if not(pd.isnull(self.ACTION[estado][item])):
-                mensagem = mensagem + item + '/'
-        mensagem = mensagem + ' esperado na linha ' + str(linha) + ' coluna ' + str(coluna)
+        mensagem = 'ERRO SINTATICO:'
+        erro = int(self.ACTION[estado][token][1:])
+        for item in self.TabelaDeErros[erro]:
+             if not pd.isnull(self.TabelaDeErros[erro][item]):
+                mensagem = mensagem + '{'+ self.TabelaDeErros[erro][item] + '}'
+        mensagem = mensagem + ' esperado antes de linha ' + str(linha) + ' coluna ' + str(coluna)
         print(mensagem)
 
     def Recuperar(self,a,AnalisadorLexico,pilha):

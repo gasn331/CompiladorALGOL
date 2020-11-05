@@ -91,7 +91,13 @@ def SalvaTokensErro(CodigoDeErro,ACTION):
 
     
 if __name__ == "__main__":
-    CodigoDeErro,ACTION = PercorrerTabela()
+    """CodigoDeErro,ACTION = PercorrerTabela()
     SalvaTokensErro(CodigoDeErro,ACTION)
     ACTION = PreencheErrosEmACTION(CodigoDeErro,ACTION)
-    SalvaACTION(ACTION)
+    SalvaACTION(ACTION)"""
+    TabelaDeErros = pd.read_csv("MENSAGEM_ERROS.csv",sep=';',index_col='CodErro')
+    TabelaDeErros = pd.DataFrame.to_dict(TabelaDeErros,orient='index')
+    for item in TabelaDeErros[0]:
+        if not pd.isnull(TabelaDeErros[0][item]):
+            print(TabelaDeErros[0][item])
+    #print(TabelaDeErros[0])     

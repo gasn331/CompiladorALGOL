@@ -86,6 +86,8 @@ def PreencheHashComPalavrasReservadas():
 
 def getToken(AnalisadorLexico):
     a = AnalisadorLexico.BuscaToken()
+    if a != None and a.token == 'comentario':
+        a = AnalisadorLexico.BuscaToken()
     if a == None:
         a = AnalisadorLexico.BuscaToken()
         while a == None:
@@ -135,10 +137,9 @@ def AnaliseSintatica(AnalisadorLexico):
             """
                 Tratamento de erros, criar nova classe e centralizar os erros léxicos e sintáticos lá
             """
-            print(ACTION[s][a.token])
-            """erro = TratamentoDeErros.Erro(ACTION,Delimitador)
+            erro = TratamentoDeErros.Erro(ACTION,Delimitador)
             erro.Apresentar(AnalisadorLexico.linha,AnalisadorLexico.coluna,pilha[-1],a.token)
-            a,AnalisadorLexico,pilha = erro.Recuperar(a,AnalisadorLexico,pilha)"""
+            a,AnalisadorLexico,pilha = erro.Recuperar(a,AnalisadorLexico,pilha)
 
 
 if __name__ == "__main__":
