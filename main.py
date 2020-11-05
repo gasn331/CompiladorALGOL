@@ -97,7 +97,7 @@ def getToken(AnalisadorLexico):
 
 
 def AnaliseSintatica(AnalisadorLexico):
-    ACTION = pd.read_csv("ACTION.csv",sep=';',index_col='Estados')
+    ACTION = pd.read_csv("ACTIONNEW.csv",sep=';',index_col='Estados')
     ACTION = pd.DataFrame.to_dict(ACTION,orient='index')
     GOTO = pd.read_csv("GOTO.csv",sep=';',index_col='Estados')
     GOTO = pd.DataFrame.to_dict(GOTO,orient='index')
@@ -135,9 +135,10 @@ def AnaliseSintatica(AnalisadorLexico):
             """
                 Tratamento de erros, criar nova classe e centralizar os erros léxicos e sintáticos lá
             """
-            erro = TratamentoDeErros.Erro(ACTION,Delimitador)
+            print(ACTION[s][a.token])
+            """erro = TratamentoDeErros.Erro(ACTION,Delimitador)
             erro.Apresentar(AnalisadorLexico.linha,AnalisadorLexico.coluna,pilha[-1],a.token)
-            a,AnalisadorLexico,pilha = erro.Recuperar(a,AnalisadorLexico,pilha)
+            a,AnalisadorLexico,pilha = erro.Recuperar(a,AnalisadorLexico,pilha)"""
 
 
 if __name__ == "__main__":
