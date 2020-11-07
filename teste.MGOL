@@ -1,12 +1,11 @@
-{ESTE EH UM COMENTARIO}
+
 inicio
     varinicio
         A inteiro;
         B inteiro;
         D inteiro;
         C real;
-    varfim;
-
+    varfim;        
     escreva "Digite B";
     leia B;
     escreva B;
@@ -15,6 +14,7 @@ inicio
     entao
         se(B<=4)
         entao
+        {OUTRO COMENTARIO}
             escreva "B esta entre 2 e 4";
         fimse
     fimse
@@ -30,6 +30,6 @@ inicio
     escreva "\n";
     escreva C;
     escreva "\n";
-    escreva A;
+    escreva ;
 
 fim
