@@ -1,7 +1,6 @@
-
 inicio
     varinicio
-        A inteiro;
+        A lit;
         B inteiro;
         D inteiro;
         C real;
@@ -12,9 +11,8 @@ inicio
     leia A;
     se(B>2)
     entao
-        se(B<=4)
+        se (B<=4)
         entao
-        {OUTRO COMENTARIO}
             escreva "B esta entre 2 e 4";
         fimse
     fimse
@@ -30,6 +28,6 @@ inicio
     escreva "\n";
     escreva C;
     escreva "\n";
-    escreva ;
+    escreva A;
 
 fim

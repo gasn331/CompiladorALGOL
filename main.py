@@ -5,7 +5,20 @@ from TabelaDeSimbolos import TabelaDeSimbolos
 """
 Execucao: python main.py [Arquivo de entrada]
 """
-Delimitador = [';','fimse','fim',')','$', 'varfim']
+
+Delimitador = [';','fimse','fim',')','$', 'varfim','entao']
+AConj = ["P","V","A","EXP_R","COND","ES","D","CABECALHO","CORPO","LV"]
+FollowAConj = { "P":["$"],
+                 "V":["fim","leia","escreva","id","se"],
+                 "A":["$"],
+                 "EXP_R":[")"],
+                 "COND":["fim","leia","escreva","id","se","fimse"],
+                 "ES":["fim","leia","escreva","id","se","fimse"],
+                 "D":["varfim","id"],
+                 "CABECALHO":["leia","escreva","id","se","fimse"],
+                 "CORPO":["fim","leia","escreva","id","se","fimse"],
+                 "LV": ["fim","leia","escreva","id","se"]}
+
 Gramatica = {1:["P\'",["P"]],
              2:["P",["inicio","V", "A"]],   
              3:["V",["varinicio","LV"]],   
@@ -58,8 +71,8 @@ def Recuperar(token,a,AnalisadorLexico,pilha,ACTION,GOTO,TabelaDeErros):
             if token == a.token:
                 a = AnalisadorLexico.getToken()
                 token = a.token
-            token = a.token
             break
+            token = a.token
         elif ACTION[s][token][0] == 'r':
             regra = int(ACTION[s][token][1:])
             A,Beta = Gramatica[regra]
@@ -69,7 +82,7 @@ def Recuperar(token,a,AnalisadorLexico,pilha,ACTION,GOTO,TabelaDeErros):
                 pilha.pop()
             t = pilha[-1]
             pilha.append(int(GOTO[t][A]))
-            if token == a.token:
+            if ACTION[pilha[-1]][a.token][0] == 'e':
                 break        
         else:
             if a.token == 'ERRO':
@@ -78,8 +91,8 @@ def Recuperar(token,a,AnalisadorLexico,pilha,ACTION,GOTO,TabelaDeErros):
                 break
             else:
                 return (None,None,None,False)
-    return(pilha,a,token,True)
-        
+    
+    return(pilha,a,token,ACTION[pilha[-1]][a.token][0] != 'e')
 
 def AnaliseSintatica(AnalisadorLexico):
     ACTION = pd.read_csv("ACTIONNEW.csv",sep=';',index_col='Estados')
@@ -133,16 +146,48 @@ def AnaliseSintatica(AnalisadorLexico):
                         mensagem = mensagem + '{'+ str(TabelaDeErros[erro][item]) + '}'
                 mensagem = mensagem + ' esperado antes de linha ' + str(AnalisadorLexico.linha) + ' coluna ' + str(AnalisadorLexico.coluna)
                 print(mensagem)
-                token = ''
-                for item in TabelaDeErros[erro]:
-                    if not(pd.isnull(TabelaDeErros[erro][item])):
-                        token = str(TabelaDeErros[erro][item])
-                        pilhaResult,aResult,tokenResult,recuperado = Recuperar(token,a,AnalisadorLexico,pilha,ACTION,GOTO,TabelaDeErros)
-                        if pilhaResult != None:
-                            pilha = pilhaResult
-                            a = aResult
-                            #print(a.token,pilha)
+                while(1):
+                    NewState = -1
+                    NewNonTerminal = ''
+                    AnalisadorBacked = AnalisadorLexico
+                    aBacked = a
+                    while (1):
+                        s = pilha[-1]
+                        for NaoTerminal in GOTO[s]:
+                            if not(pd.isnull(GOTO[s][NaoTerminal])) and NaoTerminal in AConj:
+                                NewState = GOTO[s][NaoTerminal]
+                                NewNonTerminal = NaoTerminal
+                                break
+                        if NewState < 0:
+                            pilha.pop()
+                        else:
+                            pilha.append(int(NewState))
                             break
+                    while(1):
+                        if a.token in FollowAConj[NewNonTerminal]:
+                            break
+                        if a.token == '$':
+                            break
+                        a = AnalisadorLexico.getToken()
+                    if a.token in FollowAConj[NewNonTerminal]:
+                        break
+                    else:
+                        pilha.pop()
+                        pilha.pop()
+                        AnalisadorBacked = AnalisadorLexico
+                        aBacked = a
+                """while not (a.token in Delimitador):
+                    a = AnalisadorLexico.getToken()
+                s = pilha[-1]
+                while (1):
+                    if ACTION[s][a.token][0] == 'e':
+                        pilha.pop()
+                        s = pilha[-1]
+                    else:
+                        break
+                """
+            
+
 if __name__ == "__main__":
     TabelaDeSimbolos = TabelaDeSimbolos()
     TabelaDeSimbolos.PreencheHashComPalavrasReservadas()
