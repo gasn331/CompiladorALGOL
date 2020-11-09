@@ -26,7 +26,6 @@ class Lexico:
         self.linha = automato.linha
         self.coluna = automato.coluna
         if lexema != '':
-            #print(lexema,token)
             if aceito:
                 palavra = Palavra(lexema,token,'-')
             else:

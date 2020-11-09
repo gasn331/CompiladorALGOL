@@ -4,7 +4,8 @@ inicio
         B inteiro;
         D inteiro;
         C real;
-    varfim;        
+    varfim;
+            
     escreva "Digite B";
     leia B;
     escreva B;
@@ -16,7 +17,7 @@ inicio
             escreva "B esta entre 2 e 4";
         fimse
     fimse
-
+    
     B<-B+1;
     B<-B+2;
     B<-B+3;

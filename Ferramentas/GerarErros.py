@@ -5,7 +5,6 @@ OPERADORES_RELACIONAIS = ['>','<','=','<>','<=','>=']
 ATRIBUICAO = ['<-']
 PT_V = [';']
 
-
 def PreencheACTION(ACTION):
     ACTION = ACTION
     for estado in range(0,len(ACTION)):
