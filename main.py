@@ -5,7 +5,18 @@ from TabelaDeSimbolos import TabelaDeSimbolos
 """
 Execucao: python main.py [Arquivo de entrada]
 """
+"""
+AConj é o conjunto de não terminais significativos da gramática,
+ou seja, são não terminais cujas produções na gramática tem grande importância na execução.
+Dessa forma, o tratamento de erros identifica, de acordo com a escolha de não terminal,
+um token pertencente ao follow de determinado não terminal A, assim a execução é retomada após
+a detecção de erro.
+"""
 AConj = ["P","V","A","CORPO","EXP_R","COND","ES","D","CABECALHO","LV","CMD"]
+"""
+O conjunto FollowAConj contém os conjuntos follow dos não terminais de AConj para 
+serem utilizados no tratamento de erros.
+"""
 FollowAConj = { "P":["$"],
                  "V":["fim","leia","escreva","id","se"],
                  "A":["$"],
@@ -18,6 +29,9 @@ FollowAConj = { "P":["$"],
                  "LV": ["fim","leia","escreva","id","se"],
                  "CMD": ["fim","leia","escreva","id","se","fimse"]}
 
+"""
+Gramatica é a gramática da linguagem, utilizada para fazer as reduções no algoritmo shift-reduce.
+"""
 Gramatica = {1:["P\'",["P"]],
              2:["P",["inicio","V", "A"]],   
              3:["V",["varinicio","LV"]],   
@@ -49,6 +63,41 @@ Gramatica = {1:["P\'",["P"]],
              29:["CORPO",["fimse"]],   
              30:["A",["fim"]]}
 
+"""
+AnaliseSintatica implementa o algoritmo shift-reduce. 
+Nessa implementação a Tabela Sintática é dividida em ACTION e GOTO para facilitar o carregamento em estruturas de dados.
+
+ACTIONNEW.csv mantém a tabela ACTION preenchida com códigos de erro.
+GOTO.csv mantém a tabela GOTO.
+MENSAGEM_ERROS.csv mantém a tabela de erros, cada linha da tabela representa um tipo de erro,
+suas colunas representam os tokens esperados na execução do shift-reduce.
+
+A execução do algoritmo segue o algoritmo de shift-reduce, utiliza-se uma pilha para manter os estados.
+s é o estado do topo da pilha,
+a é o token atual
+t representa o estado a ser empilhado
+regra representa a regra da gramática a ser utilizada para redução
+A e Beta armazenam a regra da gramática, A sendo o lado esquerdo e Beta o lado direito da produção.
+
+Em caso de aceitação é feita mais uma redução para chegar à P'.
+
+Ao ser encontrado um erro léxico, a mensagem de erro é apresentada na tela e um novo token é requisitado ao léxico.
+
+Nessa implementação, ao ser detectado um erro sintático, ele é apresentado na tela
+utilizando a TabelaDeErros, o código de erro é extraído da tabela ACTION e a mensagem 
+mostra os tokens pertencentes à linha do erro na TabelaDeErros, indicando os tokens esperados.
+
+O método de recuperação de erros utilizado é o Modo Pânico. A recuperação se dá da seguinte forma:
+A pilha é escaneada procurando por um estado t em que haja uma transição em GOTO[t,A] cujo
+não terminal seja parte do conjunto de não terminais significativos. Ao encontrar esse não terminal,
+o estado em GOTO[t,A] é empilhado. A seguir são ignorados tokens da entrada(utilizando AnalisadorLexico.getToken())
+até que um token que faça parte do conjunto follow de A seja encontrado, de forma a ignorar o restante do bloco
+e retornar a execução para um ponto em que seja possível continuar.
+
+Uma adição feita à esse método foi que caso não seja encontrado um não terminal adequado a partir do estado atual,
+o topo da pilha é eliminado, o AnalisadorLexico é retornado à um estado anterior e então é feita a tentativa de recuperação
+com o estado atualmente no topo da pilha.
+"""
 def AnaliseSintatica(AnalisadorLexico):
     ACTION = pd.read_csv("ACTIONNEW.csv",sep=';',index_col='Estados')
     ACTION = pd.DataFrame.to_dict(ACTION,orient='index')
