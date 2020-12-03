@@ -3,6 +3,7 @@ import pandas as pd
 import sys
 from TabelaDeSimbolos import TabelaDeSimbolos
 from Semantico import Semantico
+from PalavraExtend import PalavraExt
 """
 Execucao: python main.py [Arquivo de entrada]
 """
@@ -115,7 +116,7 @@ def AnaliseSintatica(AnalisadorLexico):
         if a.token != 'ERRO' and ACTION[s][a.token][0] == 's':
             t = int(ACTION[s][a.token][1:])
             pilha.append(t)
-            pilhaSemantica.append(a) #Adiciona o lexema encontrado na pilha auxiliar do analisador semântico
+            pilhaSemantica.append(PalavraExt(a.lexema,a.token,a.tipo,AnalisadorLexico.linha,AnalisadorLexico.coluna)) #Adiciona o lexema encontrado na pilha auxiliar do analisador semântico
             a = AnalisadorLexico.getToken()
         elif a.token != 'ERRO' and ACTION[s][a.token][0] == 'r':
             regra = int(ACTION[s][a.token][1:])

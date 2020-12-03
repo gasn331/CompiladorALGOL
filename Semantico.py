@@ -1,4 +1,5 @@
 from Palavra import Palavra
+from PalavraExtend import PalavraExt
 from TabelaDeSimbolos import TabelaDeSimbolos
 from Lexico import Lexico        
 
@@ -39,8 +40,8 @@ class Semantico:
             pilhaSemantica.pop()
         if not pilhaSemantica:
             return
+        TIPO = PalavraExt("TIPO","TIPO","int",pilhaSemantica[-1].linha,pilhaSemantica[-1].coluna)
         pilhaSemantica.pop()
-        TIPO = Palavra("TIPO","TIPO","int")
         pilhaSemantica.append(TIPO)
         return
     
@@ -49,8 +50,8 @@ class Semantico:
             pilhaSemantica.pop()
         if not pilhaSemantica:
             return
+        TIPO = PalavraExt("TIPO","TIPO","double",pilhaSemantica[-1].linha,pilhaSemantica[-1].coluna)
         pilhaSemantica.pop()
-        TIPO = Palavra("TIPO","TIPO","double")
         pilhaSemantica.append(TIPO)
         return
     
@@ -59,8 +60,8 @@ class Semantico:
             pilhaSemantica.pop()
         if not pilhaSemantica:
             return
+        TIPO = PalavraExt("TIPO","TIPO","lit",pilhaSemantica[-1].linha,pilhaSemantica[-1].coluna)
         pilhaSemantica.pop()
-        TIPO = Palavra("TIPO","TIPO","lit")
         pilhaSemantica.append(TIPO)
         return
         
@@ -83,7 +84,7 @@ class Semantico:
             else:
                 self.ArquivoIntermediarioC.write("scanf(\"%s\", "+Variavel.lexema+");\n")
         else:
-            print('ERRO SEMANTICO: Variavel nao declarada\n') #falta marcar a posicao
+            print("ERRO SEMANTICO: Variavel nao declarada na linha "+ str(ID.linha) + " coluna " + str(ID.coluna) +".\n")
 
     
     def twelve(self,pilhaSemantica,token,AnalisadorLexico):
@@ -113,7 +114,7 @@ class Semantico:
             return
         literal = pilhaSemantica[-1]
         pilhaSemantica.pop()
-        ARG = Palavra(literal.lexema,"ARG",literal.tipo)
+        ARG = PalavraExt(literal.lexema,"ARG",literal.tipo,literal.linha,literal.coluna)
         pilhaSemantica.append(ARG)
         
     def fourteen(self,pilhaSemantica,token,AnalisadorLexico):
@@ -123,7 +124,7 @@ class Semantico:
             return
         num = pilhaSemantica[-1]
         pilhaSemantica.pop()
-        ARG = Palavra(num.lexema,"ARG",num.tipo)
+        ARG = PalavraExt(num.lexema,"ARG",num.tipo,num.tipo,num.coluna)
         pilhaSemantica.append(ARG)
 
     def fifteen(self,pilhaSemantica,token,AnalisadorLexico):
@@ -134,10 +135,10 @@ class Semantico:
         ID = pilhaSemantica[-1]
         pilhaSemantica.pop()
         if ID.tipo != '-':
-            ARG = Palavra(ID.lexema,"ARG",ID.tipo)
+            ARG = PalavraExt(ID.lexema,"ARG",ID.tipo,ID.linha,ID.coluna)
             pilhaSemantica.append(ARG)
         else:
-            print("ERRO SEMANTICO: Variavel nao declarada\n")
+            print("ERRO SEMANTICO: Variavel nao declarada na linha "+ str(ID.linha) + " coluna " + str(ID.coluna) +".\n")
 
     def seventeen(self,pilhaSemantica,token,AnalisadorLexico):
         while(pilhaSemantica and (pilhaSemantica[-1].token != 'LD')):
@@ -166,9 +167,9 @@ class Semantico:
                     print("\t")
                 self.ArquivoIntermediarioC.write(ID.lexema + rcb.tipo + LD.lexema + ';\n')
             else:
-                print("ERRO SEMANTICO: Tipos diferentes para atribuicao\n")    
+                print("ERRO SEMANTICO: Tipos diferentes para atribuicao na linha "+ str(LD.linha) + " coluna " + str(LD.coluna) +".\n")    
         else:
-            print("ERRO SEMANTICO: Variavel nao declarada\n")
+            print("ERRO SEMANTICO: Variavel nao declarada na linha "+ str(ID.linha) + " coluna " + str(ID.coluna) +".\n")
 
     def eighteen(self,pilhaSemantica,token,AnalisadorLexico):
         while(pilhaSemantica and (pilhaSemantica[-1].token != 'OPRD')):
@@ -193,7 +194,7 @@ class Semantico:
         pilhaSemantica.pop()
 
         if OPRDEsq.tipo != 'literal' and OPRDEsq.tipo == OPRDDir.tipo:
-            LD = Palavra('T'+ str(self.VariavelTemporariaCount),"LD",OPRDEsq.tipo)
+            LD = PalavraExt('T'+ str(self.VariavelTemporariaCount),"LD",OPRDEsq.tipo,OPRDEsq.linha,OPRDEsq.coluna)
             pilhaSemantica.append(LD)
             self.VariavelTemporariaCount = self.VariavelTemporariaCount+1
             for _ in range(self.escopo):
@@ -204,7 +205,7 @@ class Semantico:
             """
             self.ArquivoIntermediarioC.write(LD.lexema + '=' + OPRDEsq.lexema + opm.tipo + OPRDDir.lexema+';\n')
         else:
-            print("ERRO SEMANTICO: Operandos com tipos incompativeis\n")
+             print("ERRO SEMANTICO: Operandos com tipos incompativeis na linha "+ str(OPRDEsq.linha) + " coluna " + str(OPRDEsq.coluna) +".\n")
 
     def nineteen(self,pilhaSemantica,token,AnalisadorLexico):
         while(pilhaSemantica and (pilhaSemantica[-1].token != 'OPRD')):
@@ -214,7 +215,7 @@ class Semantico:
         OPRD = pilhaSemantica[-1]
         pilhaSemantica.pop()
 
-        LD = Palavra(OPRD.lexema,"LD", OPRD.tipo)
+        LD = PalavraExt(OPRD.lexema,"LD", OPRD.tipo, OPRD.linha, OPRD.coluna)
         pilhaSemantica.append(LD)
 
     def twenty(self,pilhaSemantica,token,AnalisadorLexico):
@@ -225,7 +226,7 @@ class Semantico:
         ID = pilhaSemantica[-1]
         pilhaSemantica.pop()
 
-        OPRD = Palavra(ID.lexema,"OPRD", ID.tipo)
+        OPRD = PalavraExt(ID.lexema,"OPRD", ID.tipo, ID.linha, ID.coluna)
         pilhaSemantica.append(OPRD)
 
     def twentyone(self,pilhaSemantica,token,AnalisadorLexico):
@@ -236,7 +237,7 @@ class Semantico:
         num = pilhaSemantica[-1]
         pilhaSemantica.pop()
 
-        OPRD = Palavra(num.lexema,"OPRD", num.tipo)
+        OPRD = PalavraExt(num.lexema,"OPRD", num.tipo, num.linha, num.coluna)
         pilhaSemantica.append(OPRD)
 
 
@@ -282,14 +283,14 @@ class Semantico:
         pilhaSemantica.pop()
 
         if(OPRDEsq.tipo == 'int' or OPRDEsq.tipo == 'double') and (OPRDDir.tipo == 'int' or OPRDDir.tipo == 'double'):
-            EXP_R = Palavra('T'+ str(self.VariavelTemporariaCount),"EXP_R","int")
+            EXP_R = PalavraExt('T'+ str(self.VariavelTemporariaCount),"EXP_R","int",OPRDEsq.linha,OPRDEsq.coluna)
             self.VariavelTemporariaCount = self.VariavelTemporariaCount+1
             pilhaSemantica.append(EXP_R)
             for _ in range(self.escopo):
                 self.ArquivoIntermediarioC.write("\t")
             self.ArquivoIntermediarioC.write(EXP_R.lexema + '=' + OPRDEsq.lexema + opr.tipo +  OPRDDir.lexema+';\n')
         else:
-            print("ERRO SEMANTICO: Operandos com tipos incompativeis\n")
+            print("ERRO SEMANTICO: Operandos com tipos incompativeis na linha "+ str(OPRDEsq.linha) + " coluna " + str(OPRDEsq.coluna) +".\n")
 
     def executar(self,pilhaSemantica,regra,token,AnalisadorLexico):
         """Nesse ponto devo buscar a regra semântica correspondente à regra da redução,
