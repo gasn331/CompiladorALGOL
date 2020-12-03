@@ -2,6 +2,7 @@ from Lexico import Lexico
 import pandas as pd
 import sys
 from TabelaDeSimbolos import TabelaDeSimbolos
+from Semantico import Semantico
 """
 Execucao: python main.py [Arquivo de entrada]
 """
@@ -105,29 +106,33 @@ def AnaliseSintatica(AnalisadorLexico):
     GOTO = pd.DataFrame.to_dict(GOTO,orient='index')
     TabelaDeErros = pd.read_csv("MENSAGEM_ERROS.csv",sep=';',index_col='CodErro')
     TabelaDeErros = pd.DataFrame.to_dict(TabelaDeErros,orient='index')
-    
+    AnalisadorSemantico = Semantico(Gramatica)
     a = AnalisadorLexico.getToken()
     pilha = [0]
+    pilhaSemantica = []
     while(1):
         s = pilha[-1]
         if a.token != 'ERRO' and ACTION[s][a.token][0] == 's':
             t = int(ACTION[s][a.token][1:])
             pilha.append(t)
+            pilhaSemantica.append(a) #Adiciona o lexema encontrado na pilha auxiliar do analisador semântico
             a = AnalisadorLexico.getToken()
         elif a.token != 'ERRO' and ACTION[s][a.token][0] == 'r':
             regra = int(ACTION[s][a.token][1:])
             A,Beta = Gramatica[regra]
-            for cont in range(0,len(Beta)):
+            for _ in range(0,len(Beta)):
                 if len(pilha) <= 0:
                     break
                 pilha.pop()
             t = pilha[-1]
             pilha.append(int(GOTO[t][A]))
             print(A+' -> '+' '.join(Beta))
+            #chamar o analisador semantico aqui
+            AnalisadorSemantico.executar(pilhaSemantica,regra,a,AnalisadorLexico)
         elif a.token != 'ERRO' and ACTION[s][a.token] == 'acc':
             regra = 1
             A,Beta = Gramatica[regra]
-            for cont in range(0,len(Beta)):
+            for _ in range(0,len(Beta)):
                 if len(pilha) <= 0:
                     break
                 pilha.pop()

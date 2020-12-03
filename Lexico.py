@@ -1,6 +1,8 @@
 from AFD import AFD
 from Palavra import Palavra
 from TabelaDeSimbolos import TabelaDeSimbolos
+import string
+import re
 
 """
     Léxico recebe o endereço do código fonte a ser analisado como entrada,
@@ -28,6 +30,24 @@ class Lexico:
         if lexema != '':
             if aceito:
                 palavra = Palavra(lexema,token,'-')
+                if palavra.lexema == 'lit':
+                    palavra.tipo = palavra.lexema
+                elif palavra.lexema == 'inteiro':
+                    palavra.tipo = 'int'
+                elif palavra.lexema == 'real':
+                    palavra.tipo = 'double'
+                elif palavra.token == 'opm' or palavra.token == 'opr':
+                    palavra.tipo = palavra.lexema
+                elif palavra.token == 'rcb':
+                    palavra.tipo = '='
+                else:
+                    if palavra.token == 'num':
+                        if palavra.lexema.find('.') != -1:
+                            palavra.tipo = 'double'
+                        else:
+                            palavra.tipo = 'int'
+                    if palavra.token == 'literal':
+                        palavra.tipo = 'literal'
             else:
                 palavra = Palavra('Token Invalido na linha '+ str(linhaToken) + ' coluna ' + str(colunaToken),'ERRO','-')
             return palavra
@@ -44,5 +64,7 @@ class Lexico:
         if a.token == 'id':
             if a.lexema in self.TabelaDeSimbolos:
                 a = self.TabelaDeSimbolos[a.lexema]
+            else:
+                self.TabelaDeSimbolos[a.lexema] = a
         return a
         
