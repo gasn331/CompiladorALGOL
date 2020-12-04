@@ -6,8 +6,9 @@ from Lexico import Lexico
 class Semantico:
     def __init__(self,Gramatica):
         self.VariavelTemporariaCount = 0
-        self.ArquivoIntermediarioC = open("output.c","w")
-        #self.ArquivoIntermediarioC.write("#include<stdio.h>\ntypedef char lit[256];\nvoid main(void)\n{\n\t/*----Variaveis temporarias----*/\n")
+        self.ArquivoIntermediarioC = open("temp.c","w")
+        self.ArquivoFinal = open("output.c","w")
+        self.ArquivoFinal.write("#include<stdio.h>\ntypedef char lit[256];\nvoid main(void)\n{\n\t/*----Variaveis temporarias----*/\n")
         self.Gramatica = Gramatica
         self.escopo    = 0
     
@@ -203,6 +204,7 @@ class Semantico:
             Talvez seja melhor criar dois arquivos e fazer uma junção ao final,
             esse método aqui pode dar problema mais pra frente.
             """
+            self.ArquivoFinal.write("\t"+OPRDEsq.tipo+' '+LD.lexema+';\n')
             self.ArquivoIntermediarioC.write(LD.lexema + '=' + OPRDEsq.lexema + opm.tipo + OPRDDir.lexema+';\n')
         else:
              print("ERRO SEMANTICO: Operandos com tipos incompativeis na linha "+ str(OPRDEsq.linha) + " coluna " + str(OPRDEsq.coluna) +".\n")
@@ -256,7 +258,10 @@ class Semantico:
         pilhaSemantica.pop()
         for _ in range(self.escopo):
             self.ArquivoIntermediarioC.write("\t")
-        self.ArquivoIntermediarioC.write("if("+EXP_R.lexema+"){\n")
+        self.ArquivoIntermediarioC.write("if("+EXP_R.lexema+")\n")
+        for _ in range(self.escopo):
+            self.ArquivoIntermediarioC.write("\t")
+        self.ArquivoIntermediarioC.write("{\n")
         self.escopo = self.escopo + 1
         
 
@@ -288,6 +293,7 @@ class Semantico:
             pilhaSemantica.append(EXP_R)
             for _ in range(self.escopo):
                 self.ArquivoIntermediarioC.write("\t")
+            self.ArquivoFinal.write("\tint "+EXP_R.lexema+';\n')
             self.ArquivoIntermediarioC.write(EXP_R.lexema + '=' + OPRDEsq.lexema + opr.tipo +  OPRDDir.lexema+';\n')
         else:
             print("ERRO SEMANTICO: Operandos com tipos incompativeis na linha "+ str(OPRDEsq.linha) + " coluna " + str(OPRDEsq.coluna) +".\n")

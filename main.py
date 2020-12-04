@@ -1,6 +1,7 @@
 from Lexico import Lexico
 import pandas as pd
 import sys
+import os
 from TabelaDeSimbolos import TabelaDeSimbolos
 from Semantico import Semantico
 from PalavraExtend import PalavraExt
@@ -64,6 +65,19 @@ Gramatica = {1:["P\'",["P"]],
              28:["CORPO",["COND","CORPO"]],   
              29:["CORPO",["fimse"]],   
              30:["A",["fim"]]}
+
+def CriarArquivoFinal(AnalisadorSemantico):
+    AnalisadorSemantico.ArquivoIntermediarioC.close()
+    ArquivoTemporario = open("temp.c","r")
+    AnalisadorSemantico.ArquivoFinal.write("\t/*------------------------------*/\n")
+    for line in ArquivoTemporario:
+        AnalisadorSemantico.ArquivoFinal.write("\t"+line)
+    AnalisadorSemantico.ArquivoFinal.write("}")
+    AnalisadorSemantico.ArquivoFinal.close()
+    ArquivoTemporario.close()
+    if os.path.exists("temp.c"):
+      os.remove("temp.c")
+    
 
 """
 AnaliseSintatica implementa o algoritmo shift-reduce. 
@@ -186,7 +200,8 @@ def AnaliseSintatica(AnalisadorLexico):
                         pilha.pop()
                         AnalisadorLexico = AnalisadorBacked
                         a = aBacked
-
+    #copiar arquivos de um lado pro outro
+    CriarArquivoFinal(AnalisadorSemantico)
             
 
 if __name__ == "__main__":
