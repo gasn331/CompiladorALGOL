@@ -66,6 +66,9 @@ Gramatica = {1:["P\'",["P"]],
              29:["CORPO",["fimse"]],   
              30:["A",["fim"]]}
 
+"""
+CriarArquivoFInal combina o ArquivoIntermediarioC(temp.c) com os cabeçalhos adequados para o código em C.
+"""
 def CriarArquivoFinal(AnalisadorSemantico):
     AnalisadorSemantico.ArquivoIntermediarioC.close()
     ArquivoTemporario = open("temp.c","r")
@@ -142,7 +145,10 @@ def AnaliseSintatica(AnalisadorLexico):
             t = pilha[-1]
             pilha.append(int(GOTO[t][A]))
             print(A+' -> '+' '.join(Beta))
-            #chamar o analisador semantico aqui
+            """
+            Chamada para o analisador semântico passando a pilha auxiliar(pilhaSemantica), a regra atual,
+            o token atual e uma copia do analisador léxico.
+            """
             AnalisadorSemantico.executar(pilhaSemantica,regra,a,AnalisadorLexico)
         elif a.token != 'ERRO' and ACTION[s][a.token] == 'acc':
             regra = 1

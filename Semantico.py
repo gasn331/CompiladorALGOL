@@ -3,6 +3,9 @@ from PalavraExtend import PalavraExt
 from TabelaDeSimbolos import TabelaDeSimbolos
 from Lexico import Lexico        
 
+"""
+A classe Semantico implementa o analisador semântico utilizado para a linguagem MGOL.
+"""
 class Semantico:
     def __init__(self,Gramatica):
         self.VariavelTemporariaCount = 0
@@ -34,6 +37,7 @@ class Semantico:
         for _ in range(0,self.escopo):
             self.ArquivoIntermediarioC.write("\t")
         self.ArquivoIntermediarioC.write(TIPO.tipo + " " + ID.lexema + ";\n")
+        print(TIPO.tipo + " " + ID.lexema + ";\n")
          
 
     def seven(self,pilhaSemantica,token,AnalisadorLexico):
@@ -79,11 +83,14 @@ class Semantico:
             for _ in range(self.escopo):
                 self.ArquivoIntermediarioC.write("\t")
             if Variavel.tipo == 'int':
-               self.ArquivoIntermediarioC.write("scanf(\"%d\", &"+Variavel.lexema+");\n") 
+               self.ArquivoIntermediarioC.write("scanf(\"%d\", &"+Variavel.lexema+");\n")
+               print("scanf(\"%d\", &"+Variavel.lexema+");\n")
             elif Variavel.tipo == 'double':
                 self.ArquivoIntermediarioC.write("scanf(\"%lf\", &"+Variavel.lexema+");\n")
+                print("scanf(\"%lf\", &"+Variavel.lexema+");\n")
             else:
                 self.ArquivoIntermediarioC.write("scanf(\"%s\", "+Variavel.lexema+");\n")
+                print("scanf(\"%s\", "+Variavel.lexema+");\n")
         else:
             print("ERRO SEMANTICO: Variavel nao declarada na linha "+ str(ID.linha) + " coluna " + str(ID.coluna) +".\n")
 
@@ -100,12 +107,16 @@ class Semantico:
             self.ArquivoIntermediarioC.write("\t")
         if ARG.tipo == 'literal':
             self.ArquivoIntermediarioC.write("printf("+ARG.lexema+");\n")
+            print("printf("+ARG.lexema+");\n")
         elif ARG.tipo == 'int':
             self.ArquivoIntermediarioC.write("printf(\"%d\","+ARG.lexema+");\n")
+            print("printf(\"%d\","+ARG.lexema+");\n")
         elif ARG.tipo == 'double':
             self.ArquivoIntermediarioC.write("printf(\"%lf\","+ARG.lexema+");\n")
+            print("printf(\"%lf\","+ARG.lexema+");\n")
         elif ARG.tipo == 'lit':
             self.ArquivoIntermediarioC.write("printf(\"%s\","+ARG.lexema+");\n")
+            print("printf(\"%s\","+ARG.lexema+");\n")
 
     
     def thirteen(self,pilhaSemantica,token,AnalisadorLexico):
@@ -167,6 +178,7 @@ class Semantico:
                 for _ in range(self.escopo):
                     print("\t")
                 self.ArquivoIntermediarioC.write(ID.lexema + rcb.tipo + LD.lexema + ';\n')
+                print(ID.lexema + rcb.tipo + LD.lexema + ';\n')
             else:
                 print("ERRO SEMANTICO: Tipos diferentes para atribuicao na linha "+ str(LD.linha) + " coluna " + str(LD.coluna) +".\n")    
         else:
@@ -206,6 +218,7 @@ class Semantico:
             """
             self.ArquivoFinal.write("\t"+OPRDEsq.tipo+' '+LD.lexema+';\n')
             self.ArquivoIntermediarioC.write(LD.lexema + '=' + OPRDEsq.lexema + opm.tipo + OPRDDir.lexema+';\n')
+            print(LD.lexema + '=' + OPRDEsq.lexema + opm.tipo + OPRDDir.lexema+';\n')
         else:
              print("ERRO SEMANTICO: Operandos com tipos incompativeis na linha "+ str(OPRDEsq.linha) + " coluna " + str(OPRDEsq.coluna) +".\n")
 
@@ -247,6 +260,7 @@ class Semantico:
         for _ in range(self.escopo-1):
             self.ArquivoIntermediarioC.write("\t")
         self.ArquivoIntermediarioC.write("}\n")
+        print("}\n")
         self.escopo = self.escopo - 1
 
     def twentyfour(self,pilhaSemantica,token,AnalisadorLexico):
@@ -259,6 +273,7 @@ class Semantico:
         for _ in range(self.escopo):
             self.ArquivoIntermediarioC.write("\t")
         self.ArquivoIntermediarioC.write("if("+EXP_R.lexema+")\n")
+        print("if("+EXP_R.lexema+"){\n")
         for _ in range(self.escopo):
             self.ArquivoIntermediarioC.write("\t")
         self.ArquivoIntermediarioC.write("{\n")
@@ -295,12 +310,18 @@ class Semantico:
                 self.ArquivoIntermediarioC.write("\t")
             self.ArquivoFinal.write("\tint "+EXP_R.lexema+';\n')
             self.ArquivoIntermediarioC.write(EXP_R.lexema + '=' + OPRDEsq.lexema + opr.tipo +  OPRDDir.lexema+';\n')
+            print(EXP_R.lexema + '=' + OPRDEsq.lexema + opr.tipo +  OPRDDir.lexema+';\n')
         else:
             print("ERRO SEMANTICO: Operandos com tipos incompativeis na linha "+ str(OPRDEsq.linha) + " coluna " + str(OPRDEsq.coluna) +".\n")
 
+    """
+       Nesse ponto devo buscar a regra semântica correspondente à regra da redução,
+       e então executar as ações de acordo com a proposta do trabalho T3. Como não existe switch case em python,
+       é implementado um switcher, que seleciona uma das funções correspondentes ao argumento passado,
+       nesse caso o argumento é a regra da gramática passada pelo analisador sintático. Cada função 
+       implementa a regra semântica correspondente à sua numeração.
+    """
     def executar(self,pilhaSemantica,regra,token,AnalisadorLexico):
-        """Nesse ponto devo buscar a regra semântica correspondente à regra da redução,
-        e então executar as ações de acordo com a proposta do trabalho T3."""
         switcher = {
             5: self.five,
             6: self.six,
@@ -321,9 +342,9 @@ class Semantico:
             24: self.twentyfour,
             25: self.twentyfive
         }
-        # Get the function from switcher dictionary
+        # Pega a função correspondente à regra do dicionário switcher
         func = switcher.get(regra)
-        # Execute the function
+        # Executa a função
         if func:
             func(pilhaSemantica,token,AnalisadorLexico)
 
